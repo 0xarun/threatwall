@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ThreatWall - SOC Wallboard Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <h1>ThreatWall</h1>
+        <p>SOC Wallboard Dashboard</p>
+      </div>
+      <div class="switch-controls">
+        <button id="newSessionBtn">New Session</button>
+        <button id="switchLayoutBtn">Switch Layout</button>
+        <button id="exitMaxBtn">Exit Panel View</button>
+        <button id="fullscreenBtn">Full Screen</button>
+        <button id="helpBtn">Help</button>
+      </div>
+    </header>
+
+    <section class="tab-strip-wrap">
+      <div id="tabStrip" class="tab-strip"></div>
+      <button id="refreshAllBtn" class="refresh-all">↻ Refresh All</button>
+    </section>
+
+    <main class="workspace">
+      <section class="quick-add">
+        <h2>Add Dashboard Panel</h2>
+        <form id="quickAddForm">
+          <input name="name" placeholder="Panel name (e.g. GuardDuty PROD)" required maxlength="80" />
+          <input name="url" type="url" placeholder="https://example-dashboard" required />
+          <div class="row">
+            <input name="session" placeholder="session-id" required maxlength="80" />
+            <input name="refresh" type="number" min="5" max="3600" value="60" required />
+          </div>
+          <button type="submit">Add Panel</button>
+        </form>
+      </section>
+
+      <section class="status-panel">
+        <div class="status-line"><span>Layout:</span> <strong id="layoutText">-</strong></div>
+        <div class="status-line"><span>Fullscreen:</span> <strong id="fullscreenText">-</strong></div>
+        <div class="status-line"><span>Panels:</span> <strong id="panelCountText">0</strong></div>
+        <p class="hint">Tip: Drag tabs to reorder panels in the grid.</p>
+      </section>
+    </main>
+
+    <dialog id="helpDialog">
+      <h3>Keyboard Controls</h3>
+      <ul>
+        <li><kbd>F</kbd> Full Screen</li>
+        <li><kbd>ESC</kbd> Exit Full Screen + Exit Maximized Panel</li>
+        <li><kbd>1-9</kbd> Focus Panel</li>
+        <li><kbd>R</kbd> Refresh All</li>
+        <li><kbd>Ctrl</kbd>+<kbd>N</kbd> Add Panel</li>
+        <li><kbd>Ctrl</kbd>+<kbd>D</kbd> Remove Last Panel</li>
+        <li><kbd>Ctrl</kbd>+<kbd>L</kbd> Switch Layout</li>
+      </ul>
+      <form method="dialog">
+        <button>Close</button>
+      </form>
+    </dialog>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>
