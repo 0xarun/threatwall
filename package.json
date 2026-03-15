@@ -12,6 +12,7 @@
   "build": {
     "appId": "com.threatwall.socdashboard",
     "productName": "ThreatWall",
+    "compression": "store",
     "files": [
       "main.js",
       "preload.js",
@@ -27,8 +28,8 @@
     },
     "win": {
       "target": [
-        "portable",
-        "nsis"
+        "nsis",
+        "zip"
       ]
     },
     "nsis": {
