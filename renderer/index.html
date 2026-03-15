@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ThreatWall - SOC Wallboard Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>ThreatWall</h1>
+        <p class="subtitle">SOC Wallboard Dashboard</p>
+      </div>
+      <div class="controls">
+        <button id="layoutBtn">Change Layout (Ctrl+L)</button>
+        <button id="refreshBtn">Refresh All (R)</button>
+        <button id="fullscreenBtn">Fullscreen (F)</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="panelCards" class="panel-cards"></section>
+    </main>
+
+    <dialog id="panelDialog">
+      <form id="panelForm" method="dialog">
+        <h2>Add Panel</h2>
+        <label>Name <input required name="name" maxlength="80" /></label>
+        <label>URL <input required type="url" name="url" /></label>
+        <label>Refresh (seconds) <input required type="number" name="refresh" min="5" max="3600" value="60" /></label>
+        <label>Session <input required name="session" /></label>
+        <div class="dialog-actions">
+          <button value="cancel" type="button" id="cancelDialog">Cancel</button>
+          <button type="submit">Save</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>
