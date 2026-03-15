@@ -2,10 +2,7 @@ class LayoutManager {
   static layoutDefinitions = {
     '1x1': { rows: 1, cols: 1 },
     '1x2': { rows: 1, cols: 2 },
-    '2x2': { rows: 2, cols: 2 },
-    '2x3': { rows: 2, cols: 3 },
-    '3x3': { rows: 3, cols: 3 },
-    '3x4': { rows: 3, cols: 4 }
+    '2x2': { rows: 2, cols: 2 }
   };
 
   static normalize(layoutName) {

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+out/
+.env
+npm-debug.log
+.DS_Store
+Thumbs.db
+config/panels.json
+coverage/
+dist.zip
+releases/
+*.exe
+*.dmg
+*.AppImage

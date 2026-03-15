@@ -1,69 +1,256 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ThreatWall - SOC Wallboard Dashboard</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <header class="topbar">
-      <div class="brand">
-        <h1>ThreatWall</h1>
-        <p>SOC Wallboard Dashboard</p>
-      </div>
-      <div class="switch-controls">
-        <button id="newSessionBtn">New Session</button>
-        <button id="switchLayoutBtn">Switch Layout</button>
-        <button id="exitMaxBtn">Exit Panel View</button>
-        <button id="fullscreenBtn">Full Screen</button>
-        <button id="helpBtn">Help</button>
-      </div>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ThreatWall — Universal Wallboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
 
-    <section class="tab-strip-wrap">
-      <div id="tabStrip" class="tab-strip"></div>
-      <button id="refreshAllBtn" class="refresh-all">↻ Refresh All</button>
-    </section>
+  <!-- ═══════════ TOP NAV BAR (always visible) ═══════════ -->
+  <header id="topbar" class="topbar">
+    <div class="brand">
+      <svg class="brand-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" fill="url(#shield-grad)" stroke="none"/>
+        <path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="shield-grad" x1="3" y1="2" x2="21" y2="23" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#3b82f6"/>
+            <stop offset="100%" stop-color="#06b6d4"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="brand-text">
+        <span class="brand-name">ThreatWall</span>
+        <span class="brand-sub">Universal Wallboard</span>
+      </div>
+    </div>
 
-    <main class="workspace">
-      <section class="quick-add">
-        <h2>Add Dashboard Panel</h2>
-        <form id="quickAddForm">
-          <input name="name" placeholder="Panel name (e.g. GuardDuty PROD)" required maxlength="80" />
-          <input name="url" type="url" placeholder="https://example-dashboard" required />
-          <div class="row">
-            <input name="session" placeholder="session-id" required maxlength="80" />
-            <input name="refresh" type="number" min="5" max="3600" value="60" required />
+    <nav class="top-nav" id="topNav">
+      <!-- Setup mode buttons -->
+      <div class="nav-group" id="navSetup">
+        <button class="nav-btn accent" id="launchWallboardBtn">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2H3V4zm0 4h14v8a1 1 0 01-1 1H4a1 1 0 01-1-1V8z"/></svg>
+          Launch Wallboard
+        </button>
+      </div>
+
+      <!-- Wallboard mode buttons -->
+      <div class="nav-group" id="navWallboard">
+        <button class="nav-btn" id="addPanelNavBtn" title="Add Panel (Ctrl+Shift+N)">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/></svg>
+          Add Panel
+        </button>
+        <button class="nav-btn" id="layoutBtn" title="Cycle Layout (Ctrl+Shift+L)">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          <span id="layoutLabel">2×2</span>
+        </button>
+        <button class="nav-btn" id="refreshAllBtn" title="Refresh All (Ctrl+Shift+R)">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+          Refresh All
+        </button>
+      </div>
+
+      <!-- Always visible buttons -->
+      <div class="nav-group nav-right">
+        <button class="nav-btn" id="fullscreenBtn" title="Toggle Fullscreen (F11)">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15 13.586V12a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+        </button>
+        <button class="nav-btn" id="setupNavBtn" title="Go to Setup">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+          Setup
+        </button>
+        <button class="nav-btn" id="helpBtn" title="Help">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+        </button>
+        <button class="nav-btn danger" id="exitBtn" title="Exit">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ═══════════ TAB STRIP (wallboard mode only) ═══════════ -->
+  <div id="tabStrip" class="tab-strip-wrap hidden">
+    <div id="tabList" class="tab-list"></div>
+    <!-- Page navigation: appears when more than 4 panels -->
+    <div id="pageNav" class="page-nav hidden">
+      <button class="page-btn" id="pagePrevBtn" title="Previous page (Ctrl+Left)">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+      </button>
+      <div class="page-dots" id="pageDots"></div>
+      <span class="page-label" id="pageLabel">1 / 1</span>
+      <button class="page-btn" id="pageNextBtn" title="Next page (Ctrl+Right)">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════ SETUP VIEW ═══════════ -->
+  <main id="setupView" class="setup-view hidden">
+    <div class="setup-hero">
+      <div class="hero-badge">UNIVERSAL WALLBOARD</div>
+      <h1 class="hero-title">Configure Your Dashboard</h1>
+      <p class="hero-sub">Add the web panels you want to monitor, then launch the wallboard.</p>
+    </div>
+
+    <div class="setup-body">
+      <!-- Left: Add panel form -->
+      <section class="setup-card">
+        <h2 class="card-title">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/></svg>
+          Add Dashboard Panel
+        </h2>
+        <form id="addPanelForm" autocomplete="off">
+          <div class="form-field">
+            <label for="f-name">Panel Name</label>
+            <input id="f-name" name="name" placeholder="e.g. Production Metrics" required maxlength="80" />
           </div>
-          <button type="submit">Add Panel</button>
+          <div class="form-field">
+            <label for="f-url">Dashboard URL</label>
+            <input id="f-url" name="url" type="url" placeholder="https://example.com/dashboard" required />
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="f-session">Session ID</label>
+              <input id="f-session" name="session" placeholder="prod-metrics" required maxlength="80" />
+            </div>
+            <div class="form-field">
+              <label for="f-refresh">Refresh (sec)</label>
+              <input id="f-refresh" name="refresh" type="number" min="5" max="3600" value="60" required />
+            </div>
+          </div>
+          <button type="submit" class="btn-primary" id="addPanelSubmit">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/></svg>
+            Add Panel
+          </button>
         </form>
       </section>
 
-      <section class="status-panel">
-        <div class="status-line"><span>Layout:</span> <strong id="layoutText">-</strong></div>
-        <div class="status-line"><span>Fullscreen:</span> <strong id="fullscreenText">-</strong></div>
-        <div class="status-line"><span>Panels:</span> <strong id="panelCountText">0</strong></div>
-        <p class="hint">Tip: Drag tabs to reorder panels in the grid.</p>
+      <!-- Right: Panel list -->
+      <section class="setup-card panel-list-card">
+        <div class="card-title-row">
+          <h2 class="card-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            Configured Panels
+          </h2>
+          <div class="card-title-actions">
+            <select id="layoutSelect" class="layout-select" title="Grid Layout">
+              <option value="1x1">1×1</option>
+              <option value="1x2">1×2</option>
+              <option value="2x2" selected>2×2</option>
+            </select>
+          </div>
+        </div>
+        <div id="setupPanelList" class="setup-panel-list">
+          <div class="empty-state" id="emptyState">
+            <svg viewBox="0 0 48 48" fill="none"><rect x="4" y="8" width="40" height="32" rx="4" stroke="currentColor" stroke-width="2"/><path d="M16 24h16M24 16v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <p>No panels yet. Add your first dashboard above.</p>
+          </div>
+        </div>
+        <button class="btn-launch" id="launchBtn" disabled>
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+          Launch Wallboard
+          <span id="panelCountBadge" class="panel-count-badge">0</span>
+        </button>
       </section>
-    </main>
+    </div>
+  </main>
 
-    <dialog id="helpDialog">
-      <h3>Keyboard Controls</h3>
-      <ul>
-        <li><kbd>F</kbd> Full Screen</li>
-        <li><kbd>ESC</kbd> Exit Full Screen + Exit Maximized Panel</li>
-        <li><kbd>1-9</kbd> Focus Panel</li>
-        <li><kbd>R</kbd> Refresh All</li>
-        <li><kbd>Ctrl</kbd>+<kbd>N</kbd> Add Panel</li>
-        <li><kbd>Ctrl</kbd>+<kbd>D</kbd> Remove Last Panel</li>
-        <li><kbd>Ctrl</kbd>+<kbd>L</kbd> Switch Layout</li>
-      </ul>
-      <form method="dialog">
-        <button>Close</button>
-      </form>
-    </dialog>
+  <!-- ═══════════ EDIT PANEL MODAL ═══════════ -->
+  <dialog id="editDialog" class="modal">
+    <div class="modal-header">
+      <h3>Edit Panel</h3>
+      <form method="dialog"><button class="modal-close">✕</button></form>
+    </div>
+    <form id="editPanelForm" autocomplete="off">
+      <input type="hidden" id="editPanelId" />
+      <div class="form-field">
+        <label for="e-name">Panel Name</label>
+        <input id="e-name" name="name" required maxlength="80" />
+      </div>
+      <div class="form-field">
+        <label for="e-url">Dashboard URL</label>
+        <input id="e-url" name="url" type="url" required />
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="e-session">Session ID</label>
+          <input id="e-session" name="session" required />
+        </div>
+        <div class="form-field">
+          <label for="e-refresh">Refresh (sec)</label>
+          <input id="e-refresh" name="refresh" type="number" min="5" max="3600" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <form method="dialog"><button class="btn-ghost">Cancel</button></form>
+        <button type="submit" class="btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </dialog>
 
-    <script src="renderer.js"></script>
-  </body>
+  <!-- ═══════════ ADD PANEL MODAL (wallboard mode) ═══════════ -->
+  <dialog id="addDialog" class="modal">
+    <div class="modal-header">
+      <h3>Add New Panel</h3>
+      <form method="dialog"><button class="modal-close">✕</button></form>
+    </div>
+    <form id="addDialogForm" autocomplete="off">
+      <div class="form-field">
+        <label for="ad-name">Panel Name</label>
+        <input id="ad-name" name="name" placeholder="e.g. AWS Console" required maxlength="80" />
+      </div>
+      <div class="form-field">
+        <label for="ad-url">Dashboard URL</label>
+        <input id="ad-url" name="url" type="url" placeholder="https://..." required />
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="ad-session">Session ID</label>
+          <input id="ad-session" name="session" placeholder="aws-console" required maxlength="80" />
+        </div>
+        <div class="form-field">
+          <label for="ad-refresh">Refresh (sec)</label>
+          <input id="ad-refresh" name="refresh" type="number" min="5" max="3600" value="60" required />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <form method="dialog"><button class="btn-ghost">Cancel</button></form>
+        <button type="submit" class="btn-primary">Add Panel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ═══════════ HELP DIALOG ═══════════ -->
+  <dialog id="helpDialog" class="modal help-modal">
+    <div class="modal-header">
+      <h3>Keyboard Shortcuts</h3>
+      <form method="dialog"><button class="modal-close">✕</button></form>
+    </div>
+    <div class="help-grid">
+      <div class="help-row"><kbd>F11</kbd><span>Toggle fullscreen</span></div>
+      <div class="help-row"><kbd>Esc</kbd><span>Exit fullscreen / Exit maximized panel</span></div>
+      <div class="help-row"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>R</kbd><span>Refresh all panels</span></div>
+      <div class="help-row"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>L</kbd><span>Cycle layout</span></div>
+      <div class="help-row"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>N</kbd><span>Add new panel</span></div>
+      <div class="help-row"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>D</kbd><span>Remove last panel</span></div>
+      <div class="help-row"><kbd>Ctrl</kbd><kbd>1–9</kbd><span>Focus panel by number</span></div>
+    </div>
+    <div class="help-about" style="margin-top: 24px; text-align: center; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--glass-border); padding-top: 16px;">
+      <p><b>ThreatWall</b> · Universal multi-dashboard manager.</p>
+      <p style="margin-top: 4px; color: var(--text-dim);">Built by Arun Kumar (0xarun)</p>
+    </div>
+    <form method="dialog" class="modal-footer"><button class="btn-primary">Close</button></form>
+  </dialog>
+
+  <!-- Splitter resize handles between panels (positioned by renderer.js) -->
+  <div id="splitterContainer" class="splitter-container hidden"></div>
+
+  <script src="renderer.js"></script>
+</body>
 </html>

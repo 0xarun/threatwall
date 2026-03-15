@@ -1,78 +1,72 @@
-# ThreatWall – SOC Wallboard Dashboard
+# ThreatWall 🛡️
+**Universal Multi-Dashboard Manager**
+<p align="center">
+  <i>Simplify your monitoring. Streamline your screens.</i><br>
+  Built by <b>Arun Kumar (0xarun)</b>
+</p>
 
-ThreatWall is a production-oriented Electron desktop application for SOC teams to monitor multiple security platforms in one efficient wallboard.
+---
 
-## Features
+## 🚀 What is ThreatWall?
 
-- BrowserView multi-panel monitoring with dynamic layouts (`1x1`, `1x2`, `2x2`, `2x3`, `3x3`, `3x4`)
-- Isolated persistent sessions per panel using Electron partitions (`persist:<session>`)
-- Per-panel refresh timers + panel-only reloads
-- Fast top controls: **New Session / Switch Layout / Exit Panel View / Full Screen / Help**
-- Thin tab strip with panel focus, maximize, panel refresh, and remove buttons
-- Drag-and-drop tab reorder to move panel positions in the live grid
-- Global refresh-all control
-- Keyboard-first SOC operation model
-- Config persistence and hot-reload from `config/panels.json`
+ThreatWall is a standalone native desktop application built on Electron that lets you embed, aggregate, and manage multiple web dashboards into single, beautifully crafted "wall-board" grids. 
 
-## Project Structure
+Whether you are monitoring complex network architecture, tracking live infrastructure health in a Server operations center (NOC), analyzing marketing funnels, or displaying financial metrics on an office TV, ThreatWall gives you granular control over what you display and how you display it. 
 
-```text
-project-root/
-├── package.json
-├── main.js
-├── preload.js
-├── config/
-│   └── panels.json
-├── core/
-│   ├── panelManager.js
-│   ├── layoutManager.js
-│   ├── sessionManager.js
-│   └── refreshEngine.js
-├── renderer/
-│   ├── index.html
-│   ├── renderer.js
-│   └── styles.css
-└── assets/
-    ├── icons/
-    └── logo/
-```
+No more drowning in 50 active browser tabs or dealing with clunky browser extensions. Add your URL, define your refresh interval, build your layout, and launch. 
 
-## Setup
+## ✨ Key Features
 
-```bash
-npm install
-```
+- **Grid Freedom**: Build perfect `1x1`, `1x2`, or `2x2` dashboard grids dynamically.
+- **Smart Paging**: Adding more than 4 panels? ThreatWall natively splits your panels into logical background pages, allowing you to instantly hot-swap between multiple 4-panel screens without reloading or refreshing. 
+- **Isolated Sessions**: Every panel runs securely in its own isolated browser session. Login to AWS perfectly cleanly 4 separate times on 4 separate accounts. 
+- **SSL Error Bypassing**: Perfect for internal networks and secure environments: ThreatWall cleanly bypasses `ERR_CERT_AUTHORITY_INVALID` errors and loads self-signed URLs natively. 
+- **Live Splitter Re-sizing**: Effortlessly drag and stretch your layout fractions symmetrically while viewing live data.
+- **Auto-Refresh Engine**: Configure hard refresh intervals per-panel (e.g. refresh Grafana every 30s, refresh AWS every 5m) via silent background thread drops. 
+- **Zero-Friction Fullscreen (F11)**: Native OS Fullscreen completely auto-hides the Navigation header and tabs, expanding your dashboard to 100% borderless display real estate. Mouse over the top to quickly reveal controls. 
 
-## Run
+## 📦 Installation & Setup
 
-```bash
-npm start
-```
+1. **Clone the Repo**
+   ```bash
+   git clone https://github.com/0xarun/threatwall.git
+   cd threatwall
+   ```
 
-## Build
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Run Locally in Dev Mode**
+   ```bash
+   npm start
+   ```
+
+## 🔨 Packaging for Production
+
+If you want to package ThreatWall into a portable `.exe` that you can hand to your team or put on a USB stick to run on TVs without needing Node.js:
 
 ```bash
 npm run build
 ```
+*(The finished native installer & portable executable will appear inside the `dist` or `out` folder)*
 
-Build targets:
-- Windows Portable EXE
-- Windows NSIS installer
+## ⌨️ Keyboard Shortcuts
 
-## Keyboard Shortcuts
+| Shortcut | Action |
+| --- | --- |
+| `F11` | Toggle Fullscreen |
+| `Esc` | Exit Fullscreen / Restore Panel |
+| `Ctrl+Shift+L` | Cycle Grid Layouts (`1x1` → `1x2` → `2x2`) |
+| `Ctrl+Shift+R` | Hard Refresh All Panels on Screen |
+| `Ctrl+Shift+N` | Open "Add New Panel" Modal on Wallboard |
+| `Ctrl+Left/Right` | Swipe Left or Right between Pages |
+| `Ctrl+[1-9]` | Quickly target focus to a specific panel |
 
-- `F` → Toggle fullscreen
-- `ESC` → Exit fullscreen and exit maximized panel
-- `1-9` → Focus panel by index
-- `R` → Refresh all panels
-- `Ctrl+N` → Focus quick add form
-- `Ctrl+D` → Remove last panel
-- `Ctrl+L` → Switch layout
+## 🤝 Need Help?
+Inside the application, click the **Help ( ? )** icon in the upper right.
 
-## Security Posture
 
-- `nodeIntegration: false` and `contextIsolation: true`
-- `sandbox: true` for window and panel contexts
-- Permission request denial for panel sessions
-- URL sanitization and bounded refresh interval validation
-- New windows blocked via `setWindowOpenHandler`
+---
+Made with ☕ by **[Arun Kumar / 0xarun](https://github.com/0xarun)**

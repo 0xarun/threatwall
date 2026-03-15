@@ -1,9 +1,9 @@
 {
   "name": "threatwall",
   "version": "1.0.0",
-  "description": "ThreatWall - SOC Wallboard Dashboard",
+  "description": "ThreatWall - Universal Wallboard Dashboard",
   "main": "main.js",
-  "author": "ThreatWall Team",
+  "author": "Arun Kumar (0xarun)",
   "license": "MIT",
   "scripts": {
     "start": "electron .",
@@ -29,8 +29,7 @@
       "target": [
         "portable",
         "nsis"
-      ],
-      "artifactName": "${productName}-${version}-${target}.${ext}"
+      ]
     },
     "nsis": {
       "oneClick": false,
