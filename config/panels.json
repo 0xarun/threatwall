@@ -1,0 +1,29 @@
+{
+  "layout": "2x2",
+  "panels": [
+    {
+      "name": "GuardDuty PROD",
+      "url": "https://console.aws.amazon.com/guardduty",
+      "refresh": 60,
+      "session": "guardduty-prod"
+    },
+    {
+      "name": "GuardDuty UAT",
+      "url": "https://console.aws.amazon.com/guardduty",
+      "refresh": 60,
+      "session": "guardduty-uat"
+    },
+    {
+      "name": "Elastic Security",
+      "url": "https://www.elastic.co/security",
+      "refresh": 15,
+      "session": "elastic"
+    },
+    {
+      "name": "ESET Protect",
+      "url": "https://protect.eset.com/",
+      "refresh": 30,
+      "session": "eset"
+    }
+  ]
+}

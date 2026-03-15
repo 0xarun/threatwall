@@ -1,0 +1,46 @@
+{
+  "name": "threatwall",
+  "version": "1.0.0",
+  "description": "ThreatWall - SOC Wallboard Dashboard",
+  "main": "main.js",
+  "author": "ThreatWall Team",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable nsis"
+  },
+  "build": {
+    "appId": "com.threatwall.socdashboard",
+    "productName": "ThreatWall",
+    "files": [
+      "main.js",
+      "preload.js",
+      "core/**/*",
+      "renderer/**/*",
+      "config/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "directories": {
+      "buildResources": "assets"
+    },
+    "win": {
+      "target": [
+        "portable",
+        "nsis"
+      ],
+      "artifactName": "${productName}-${version}-${target}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^31.1.0",
+    "electron-builder": "^24.13.3"
+  }
+}
