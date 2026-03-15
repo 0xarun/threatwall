@@ -1,17 +1,18 @@
 # ThreatWall – SOC Wallboard Dashboard
 
-ThreatWall is a production-oriented Electron desktop application for SOC teams to monitor multiple security platforms in a single, lightweight wallboard application.
+ThreatWall is a production-oriented Electron desktop application for SOC teams to monitor multiple security platforms in one efficient wallboard.
 
 ## Features
 
-- Multi-panel layouts (`1x1`, `1x2`, `2x2`, `2x3`, `3x3`, `3x4`)
-- Dedicated Electron persistent session partition per panel
-- Per-panel refresh timers with isolated reload behavior
-- Keyboard-first operations for wallboard workflows
-- Dark SOC-friendly control plane UI
-- Config persistence via `config/panels.json`
-- Config hot-reload support
-- Packaging with `electron-builder` for Windows Portable + NSIS installer
+- BrowserView multi-panel monitoring with dynamic layouts (`1x1`, `1x2`, `2x2`, `2x3`, `3x3`, `3x4`)
+- Isolated persistent sessions per panel using Electron partitions (`persist:<session>`)
+- Per-panel refresh timers + panel-only reloads
+- Fast top controls: **New Session / Switch Layout / Exit Panel View / Full Screen / Help**
+- Thin tab strip with panel focus, maximize, panel refresh, and remove buttons
+- Drag-and-drop tab reorder to move panel positions in the live grid
+- Global refresh-all control
+- Keyboard-first SOC operation model
+- Config persistence and hot-reload from `config/panels.json`
 
 ## Project Structure
 
@@ -42,40 +43,36 @@ project-root/
 npm install
 ```
 
-## Run (development)
+## Run
 
 ```bash
 npm start
 ```
 
-## Build (Windows)
+## Build
 
 ```bash
 npm run build
 ```
 
-Build output includes:
-- Portable EXE
-- NSIS installer
+Build targets:
+- Windows Portable EXE
+- Windows NSIS installer
 
 ## Keyboard Shortcuts
 
 - `F` → Toggle fullscreen
-- `ESC` → Exit fullscreen
+- `ESC` → Exit fullscreen and exit maximized panel
 - `1-9` → Focus panel by index
 - `R` → Refresh all panels
-- `Ctrl+N` → Add panel
+- `Ctrl+N` → Focus quick add form
 - `Ctrl+D` → Remove last panel
-- `Ctrl+L` → Change layout
-
-## Example Panel Config
-
-See `config/panels.json`.
+- `Ctrl+L` → Switch layout
 
 ## Security Posture
 
-- `nodeIntegration: false` in BrowserViews
-- `contextIsolation: true`
-- `sandbox: true`
-- URL sanitization and refresh/session bounds validation
+- `nodeIntegration: false` and `contextIsolation: true`
+- `sandbox: true` for window and panel contexts
+- Permission request denial for panel sessions
+- URL sanitization and bounded refresh interval validation
 - New windows blocked via `setWindowOpenHandler`

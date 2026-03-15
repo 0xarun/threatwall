@@ -16,9 +16,7 @@ class PanelManager {
   loadPanels(layoutName, configs) {
     this.clear();
     this.layout = LayoutManager.normalize(layoutName);
-
     this.panels = configs.map((config, index) => this.createPanel(config, index));
-
     this.applyLayout();
     this.broadcast();
   }
@@ -45,7 +43,6 @@ class PanelManager {
 
     view.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
     view.webContents.loadURL(config.url).catch(() => {});
-
     this.mainWindow.addBrowserView(view);
 
     const panel = {
@@ -147,6 +144,20 @@ class PanelManager {
     this.broadcast();
   }
 
+  movePanel(panelId, targetId) {
+    const sourceIndex = this.panels.findIndex((panel) => panel.id === panelId);
+    const targetIndex = this.panels.findIndex((panel) => panel.id === targetId);
+
+    if (sourceIndex === -1 || targetIndex === -1 || sourceIndex === targetIndex) {
+      return;
+    }
+
+    const [moved] = this.panels.splice(sourceIndex, 1);
+    this.panels.splice(targetIndex, 0, moved);
+    this.applyLayout();
+    this.broadcast();
+  }
+
   focusByNumber(n) {
     const index = n - 1;
     const panel = this.panels[index];
@@ -165,6 +176,15 @@ class PanelManager {
         panel.view.webContents.reloadIgnoringCache();
       }
     });
+  }
+
+  refreshPanel(panelId) {
+    const panel = this.panels.find((entry) => entry.id === panelId);
+    if (!panel || panel.view.webContents.isDestroyed()) {
+      return;
+    }
+
+    panel.view.webContents.reloadIgnoringCache();
   }
 
   cycleLayout() {
@@ -205,7 +225,8 @@ class PanelManager {
     this.sendState({
       layout: this.layout,
       panels: this.getPublicPanels(),
-      fullscreen: this.mainWindow.isFullScreen()
+      fullscreen: this.mainWindow.isFullScreen(),
+      maximized: this.maximizedId
     });
   }
 }

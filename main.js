@@ -58,7 +58,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1600,
     height: 900,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#0b1220',
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -87,22 +87,37 @@ function createWindow() {
   });
 }
 
-ipcMain.handle('state:get', () => ({
-  layout: panelManager.layout,
-  panels: panelManager.getPublicPanels(),
-  fullscreen: mainWindow.isFullScreen()
-}));
+function getStatePayload() {
+  return {
+    layout: panelManager.layout,
+    panels: panelManager.getPublicPanels(),
+    fullscreen: mainWindow.isFullScreen(),
+    maximized: panelManager.maximizedId
+  };
+}
+
+function persistPanels() {
+  saveConfig(panelManager.layout, panelManager.getPublicPanels());
+}
+
+ipcMain.handle('state:get', () => getStatePayload());
 
 ipcMain.handle('panel:add', (_event, panel) => {
   const cleanPanel = sanitizePanel(panel);
   panelManager.addPanel(cleanPanel);
-  saveConfig(panelManager.layout, panelManager.getPublicPanels());
+  persistPanels();
   return panelManager.getPublicPanels();
 });
 
 ipcMain.handle('panel:remove', (_event, panelId) => {
   panelManager.removePanel(panelId);
-  saveConfig(panelManager.layout, panelManager.getPublicPanels());
+  persistPanels();
+  return panelManager.getPublicPanels();
+});
+
+ipcMain.handle('panel:move', (_event, panelId, targetId) => {
+  panelManager.movePanel(panelId, targetId);
+  persistPanels();
   return panelManager.getPublicPanels();
 });
 
@@ -111,8 +126,18 @@ ipcMain.handle('panel:toggle-maximize', (_event, panelId) => {
   return true;
 });
 
+ipcMain.handle('panel:exit-maximize', () => {
+  panelManager.exitMaximize();
+  return true;
+});
+
 ipcMain.handle('panel:refresh-all', () => {
   panelManager.refreshAll();
+  return true;
+});
+
+ipcMain.handle('panel:refresh-one', (_event, panelId) => {
+  panelManager.refreshPanel(panelId);
   return true;
 });
 
@@ -123,7 +148,7 @@ ipcMain.handle('panel:focus-number', (_event, number) => {
 
 ipcMain.handle('layout:cycle', () => {
   const layout = panelManager.cycleLayout();
-  saveConfig(layout, panelManager.getPublicPanels());
+  persistPanels();
   return layout;
 });
 
@@ -131,6 +156,11 @@ ipcMain.handle('window:set-fullscreen', (_event, enabled) => {
   mainWindow.setFullScreen(Boolean(enabled));
   panelManager.broadcast();
   return mainWindow.isFullScreen();
+});
+
+ipcMain.handle('window:close', () => {
+  mainWindow.close();
+  return true;
 });
 
 app.whenReady().then(() => {
